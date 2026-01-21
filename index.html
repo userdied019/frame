@@ -20,8 +20,10 @@ body{
     align-items:center;
     min-height:100vh;
     overflow:hidden;
+    position:relative;
 }
 
+/* ================= CONTAINER ================= */
 .container{
     position:relative;
     width:90%;
@@ -37,6 +39,13 @@ body{
     border-radius:10px;
     filter:drop-shadow(0 10px 20px rgba(0,0,0,.7));
     background-size:5px 5px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation:floatStamp 6s ease-in-out infinite;
+}
+
+.stamp:hover{
+    transform: scale(1.05) rotate(var(--rotate));
+    box-shadow:0 20px 40px rgba(0,0,0,.8);
 }
 
 /* perforated edge */
@@ -54,16 +63,16 @@ body{
 
 /* left */
 .stamp.left{
+    --rotate:-8deg;
     background:radial-gradient(#00000022 1px, transparent 1px), #b8e600;
-    transform:rotate(-8deg);
     left:5%;
     top:10%;
 }
 
 /* right */
 .stamp.right{
+    --rotate:6deg;
     background:radial-gradient(#00000022 1px, transparent 1px), #f7a2c3;
-    transform:rotate(6deg);
     right:5%;
     top:15%;
 }
@@ -73,11 +82,13 @@ body{
     font-weight:bold;
     font-size:1rem;
     line-height:1.2rem;
+    text-shadow: 1px 1px 3px rgba(0,0,0,.7);
 }
 
 .number{
     font-size:1.2rem;
     font-weight:bold;
+    text-shadow: 1px 1px 3px rgba(0,0,0,.7);
 }
 
 /* ================= PHOTO ================= */
@@ -85,6 +96,7 @@ body{
     position:relative;
     margin-top:40px;
     height:200px;
+    overflow:hidden;
 }
 
 .photo img{
@@ -92,6 +104,12 @@ body{
     height:100%;
     object-fit:cover;
     filter:grayscale(100%);
+    transition: filter 0.5s ease, transform 0.5s ease;
+}
+
+.photo img:hover{
+    filter:grayscale(0%);
+    transform: scale(1.05);
 }
 
 /* ================= SUNFLOWER ================= */
@@ -100,6 +118,14 @@ body{
     width:120px;
     height:120px;
     animation:spin 12s linear infinite, pulse 4s ease-in-out infinite;
+}
+
+.sunflower:nth-of-type(1){
+    animation-duration:12s, 4s;
+}
+
+.sunflower:nth-of-type(2){
+    animation-duration:16s, 5s;
 }
 
 .sunflower .center{
@@ -177,6 +203,23 @@ body{
     transform:translate(-50%,-50%);
 }
 
+/* ================= DYNAMIC SPARKLES ================= */
+.sparkle{
+    position:absolute;
+    width:6px;
+    height:6px;
+    background:rgba(255,255,255,0.8);
+    border-radius:50%;
+    animation:moveSparkle 6s linear infinite;
+}
+
+/* stagger animations for natural randomness */
+.sparkle:nth-child(1){animation-delay:0s; left:10%; top:20%;}
+.sparkle:nth-child(2){animation-delay:1s; left:30%; top:50%;}
+.sparkle:nth-child(3){animation-delay:2s; left:50%; top:10%;}
+.sparkle:nth-child(4){animation-delay:3s; left:70%; top:40%;}
+.sparkle:nth-child(5){animation-delay:4s; left:85%; top:30%;}
+
 /* ================= ANIMATIONS ================= */
 @keyframes spin{
     from{transform:rotate(0deg);}
@@ -193,54 +236,36 @@ body{
     50%{transform:translateY(-15px);}
 }
 
+@keyframes floatStamp{
+    0%,100%{transform:translateY(0) rotate(var(--rotate));}
+    50%{transform:translateY(-10px) rotate(var(--rotate));}
+}
+
+@keyframes moveSparkle{
+    0%{transform: translateY(0) scale(1);}
+    50%{transform: translateY(-30px) scale(1.5);}
+    100%{transform: translateY(0) scale(1);}
+}
+
 /* ================= RESPONSIVE ================= */
 @media (max-width: 768px) {
-    .stamp{
-        width:45%;
-        padding:3%;
-    }
-    .photo{
-        height:150px;
-    }
+    .stamp{width:45%; padding:3%;}
+    .photo{height:150px;}
 
-    /* scale down sunflowers and reposition */
-    .sunflower{
-        width:60px !important;
-        height:60px !important;
-    }
+    .sunflower{width:60px !important; height:60px !important;}
+    .sunflower:first-of-type{top:5% !important; right:5% !important;}
+    .sunflower:last-of-type{bottom:5% !important; right:10% !important; width:50px !important; height:50px !important;}
 
-    .sunflower:first-of-type{
-        top:5% !important;
-        right:5% !important;
-    }
-
-    .sunflower:last-of-type{
-        bottom:5% !important;
-        right:10% !important;
-        width:50px !important;
-        height:50px !important;
-    }
-
-    .white-flower{
-        width:50px !important;
-        height:50px !important;
-        left:5% !important;
-        top:60% !important;
-    }
-
-    /* scale center of white flower proportionally */
-    .white-flower .center{
-        width:10px;
-        height:10px;
-    }
+    .white-flower{width:50px !important; height:50px !important; left:5% !important; top:60% !important;}
+    .white-flower .center{width:10px; height:10px;}
 }
 </style>
 </head>
 
 <body>
 
-<!-- BACKGROUND MUSIC -->
-<audio autoplay loop>
+<!-- MUSIC ELEMENT -->
+<audio id="bg-music" loop>
   <source src="music.mp3" type="audio/mpeg">
   Your browser does not support the audio element.
 </audio>
@@ -287,7 +312,25 @@ body{
         <div class="center"></div>
     </div>
 
+    <!-- Dynamic Sparkles -->
+    <div class="sparkle"></div>
+    <div class="sparkle"></div>
+    <div class="sparkle"></div>
+    <div class="sparkle"></div>
+    <div class="sparkle"></div>
+
 </div>
+
+<script>
+  // Mobile-friendly music play on first interaction
+  document.addEventListener('click', playMusicOnce, { once: true });
+  document.addEventListener('touchstart', playMusicOnce, { once: true });
+
+  function playMusicOnce() {
+      const music = document.getElementById('bg-music');
+      music.play().catch(() => console.log("Music requires user interaction."));
+  }
+</script>
 
 </body>
 </html>
